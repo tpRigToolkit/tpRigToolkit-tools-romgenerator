@@ -8,13 +8,16 @@ Tool to easily creator Range of Motion animations to easily test deformations
 from __future__ import print_function, division, absolute_import
 
 from tpDcc.core import tool
-from tpDcc.libs.qt.widgets import toolset
 
-# Defines ID of the tool
-TOOL_ID = 'tpRigToolkit-tools-romgenerator'
+from tpRigToolkit.tools.romgenerator.core import consts, toolset, client
 
 
 class RomGeneratorTool(tool.DccTool, object):
+
+    ID = consts.TOOL_ID
+    TOOLSET_CLASS = toolset.RomGeneratorToolset
+    CLIENT_CLASS = client.RomGeneratorClient
+
     def __init__(self, *args, **kwargs):
         super(RomGeneratorTool, self).__init__(*args, **kwargs)
 
@@ -23,7 +26,7 @@ class RomGeneratorTool(tool.DccTool, object):
         base_tool_config = tool.DccTool.config_dict(file_name=file_name)
         tool_config = {
             'name': 'ROM Generator',
-            'id': TOOL_ID,
+            'id': cls.ID,
             'supported_dccs': {'maya': ['2017', '2018', '2019', '2020', '2022']},
             'icon': 'rom',
             'tooltip': 'Tool to easily creator Range of Motion animations to easily test deformations',
@@ -38,13 +41,3 @@ class RomGeneratorTool(tool.DccTool, object):
 
     def launch(self, *args, **kwargs):
         return self.launch_frameless(*args, **kwargs)
-
-
-class RomGeneratorToolset(toolset.ToolsetWidget, object):
-    ID = TOOL_ID
-
-    def __init__(self, *args, **kwargs):
-        super(RomGeneratorToolset, self).__init__(*args, **kwargs)
-
-    def contents(self):
-        return []
