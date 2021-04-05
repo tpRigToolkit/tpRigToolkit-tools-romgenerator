@@ -40,3 +40,16 @@ class RomGeneratorClient(client.DccClient, object):
             return False
 
         return reply_dict['result']
+
+    def clear_rom(self, joint_handles):
+        cmd = {
+            'cmd': 'clear_rom',
+            'joint_handles': joint_handles
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']

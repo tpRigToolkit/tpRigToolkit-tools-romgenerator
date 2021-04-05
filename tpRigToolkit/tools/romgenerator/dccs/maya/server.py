@@ -118,3 +118,19 @@ class RomGeneratorServer(server.DccServer, object):
                         time = time + frame_interval
 
         reply['success'] = True
+
+    def clear_rom(self, data, reply):
+        joint_handles = data.get('joint_handles', list())
+        if not joint_handles:
+            reply['success'] = False
+            reply['msg'] = 'No joint selected to clear ROM data from'
+            return
+
+        # retrieve joints from UUIDs
+        joints = [dcc.find_node_by_id(joint_id, full_path=True) for joint_id in joint_handles]
+        joints = [joint for joint in joints if joint and dcc.node_exists(joint)]
+
+        maya.cmds.currentTime(0)
+        maya.cmds.cutKey(joints, time=(-10000, 10000), option="keys")
+
+        reply['success'] = True

@@ -57,6 +57,14 @@ class RomGeneratorView(base.BaseWidget):
         self._anim_start_frame_spn = spinbox.BaseSpinBox(parent=self)
         self._current_anim_length_lbl = label.BaseLabel(parent=self)
         self._generate_rom_button = buttons.BaseButton('Generate Range of Motion Keys', parent=self)
+        self._clear_rom_button = buttons.BaseButton(parent=self)
+        self._clear_rom_button.theme_type = buttons.BaseButton.Types.DANGER
+        self._clear_rom_button.setIcon(resources.icon('trash'))
+        self._clear_rom_button.setStyleSheet('background-color: rgba(')
+        self._clear_rom_button.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
+        buttons_layout = layouts.HorizontalLayout(spacing=2, margins=(2, 2, 2, 2))
+        buttons_layout.addWidget(self._generate_rom_button)
+        buttons_layout.addWidget(self._clear_rom_button)
         options_layout.addWidget(self._rotate_x_cbx, 0, 0)
         options_layout.addWidget(self._rotate_y_cbx, 0, 1)
         options_layout.addWidget(self._rotate_z_cbx, 0, 2)
@@ -70,7 +78,7 @@ class RomGeneratorView(base.BaseWidget):
         options_main_layout.addLayout(options_layout)
         options_main_layout.addStretch()
         options_main_layout.addWidget(dividers.Divider(parent=self))
-        options_main_layout.addWidget(self._generate_rom_button)
+        options_main_layout.addLayout(buttons_layout)
 
         self.main_layout.addWidget(main_splitter)
         main_splitter.addWidget(joints_list_widget)
@@ -84,7 +92,8 @@ class RomGeneratorView(base.BaseWidget):
         self._interval_frames_spn.valueChanged.connect(self._controller.set_interval_frames)
         self._anim_start_frame_spn.valueChanged.connect(self._controller.set_animation_start_frame)
         self._joints_list.itemSelectionChanged.connect(self._on_joints_selection_changed)
-        self._generate_rom_button.clicked.connect(self._on_generate_clicked)
+        self._generate_rom_button.clicked.connect(self._controller.generate_rom)
+        self._clear_rom_button.clicked.connect(self._controller.clear_rom)
 
         self._model.rotateXChanged.connect(self._on_rotate_x_changed)
         self._model.rotateYChanged.connect(self._on_rotate_y_changed)
@@ -157,6 +166,3 @@ class RomGeneratorView(base.BaseWidget):
         selected_items = self._joints_list.selectedItems()
         joints_uuids = [item.data(Qt.UserRole + 1) for item in selected_items]
         self._controller.set_selected_joints(joints_uuids)
-
-    def _on_generate_clicked(self):
-        self._controller.generate_rom()

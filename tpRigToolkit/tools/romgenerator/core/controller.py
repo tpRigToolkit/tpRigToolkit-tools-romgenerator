@@ -99,3 +99,10 @@ class RomGeneratorController(object):
             return False
 
         return self._client.generate_rom(rom_data)
+
+    def clear_rom(self):
+        joint_handles = self._model.selected_joints
+        if not joint_handles:
+            return False
+
+        return self._client.clear_rom(joint_handles)
