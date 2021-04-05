@@ -7,6 +7,9 @@ Tool to easily creator Range of Motion animations to easily test deformations
 
 from __future__ import print_function, division, absolute_import
 
+import os
+import sys
+
 from tpDcc.core import tool
 
 from tpRigToolkit.tools.romgenerator.core import consts, toolset, client
@@ -41,3 +44,16 @@ class RomGeneratorTool(tool.DccTool, object):
 
     def launch(self, *args, **kwargs):
         return self.launch_frameless(*args, **kwargs)
+
+
+if __name__ == '__main__':
+    import tpRigToolkit.loader
+    from tpDcc.managers import tools
+
+    tool_path = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+    if tool_path not in sys.path:
+        sys.path.append(tool_path)
+
+    tpRigToolkit.loader.init()
+
+    tools.ToolsManager().launch_tool_by_id(consts.TOOL_ID)
