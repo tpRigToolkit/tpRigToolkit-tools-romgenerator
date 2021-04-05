@@ -31,7 +31,7 @@ class RomGeneratorTool(tool.DccTool, object):
             'name': 'ROM Generator',
             'id': cls.ID,
             'supported_dccs': {'maya': ['2017', '2018', '2019', '2020', '2022']},
-            'icon': 'rom',
+            'icon': 'romgenerator',
             'tooltip': 'Tool to easily creator Range of Motion animations to easily test deformations',
             'tags': ['tpRigToolkit', 'dcc', 'tool', 'rom', 'deformation', 'generator'],
             'is_checkable': False,

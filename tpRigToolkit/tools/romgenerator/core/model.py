@@ -22,6 +22,7 @@ class RomGeneratorModel(QObject):
     animationStartFrameChanged = Signal(int)
     animationLengthChanged = Signal(int)
     sceneJointsChanged = Signal(dict)
+    selectedJointsChanged = Signal(list)
 
     def __init__(self):
         super(RomGeneratorModel, self).__init__()
@@ -114,3 +115,4 @@ class RomGeneratorModel(QObject):
     @selected_joints.setter
     def selected_joints(self, joints_list):
         self._selected_joints = python.force_list(joints_list)
+        self.selectedJointsChanged.emit(self._selected_joints)

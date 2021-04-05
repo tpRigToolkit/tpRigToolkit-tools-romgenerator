@@ -39,9 +39,22 @@ class RomGeneratorView(base.BaseWidget):
         joints_list_layout = layouts.VerticalLayout(spacing=2, margins=(2, 2, 2, 2))
         joints_list_widget.setLayout(joints_list_layout)
         self._search = search.SearchFindWidget(parent=self)
+        joints_list_button_layout = layouts.HorizontalLayout(spacing=2, margins=(2, 2, 2, 2))
+        self._refresh_button = buttons.BaseButton(parent=self)
+        self._refresh_button.setToolTip('Refresh list of joints from current scene')
+        self._refresh_button.setIcon(resources.icon('refresh'))
+        self._select_from_scene_button = buttons.BaseButton(parent=self)
+        self._select_from_scene_button.setToolTip('Selects joints in list based on scene selection')
+        self._select_from_scene_button.setIcon(resources.icon('cursor'))
+        joints_list_button_layout.addStretch()
+        joints_list_button_layout.addWidget(self._select_from_scene_button)
+        joints_list_button_layout.addWidget(self._refresh_button)
+
         self._joints_list = QListWidget(parent=self)
         self._joints_list.setSelectionMode(QListWidget.ExtendedSelection)
         joints_list_layout.addWidget(self._search)
+        joints_list_layout.addWidget(dividers.Divider(parent=self))
+        joints_list_layout.addLayout(joints_list_button_layout)
         joints_list_layout.addWidget(dividers.Divider(parent=self))
         joints_list_layout.addWidget(self._joints_list)
 
@@ -92,6 +105,8 @@ class RomGeneratorView(base.BaseWidget):
         self._interval_frames_spn.valueChanged.connect(self._controller.set_interval_frames)
         self._anim_start_frame_spn.valueChanged.connect(self._controller.set_animation_start_frame)
         self._joints_list.itemSelectionChanged.connect(self._on_joints_selection_changed)
+        self._select_from_scene_button.clicked.connect(self._controller.update_joints_selection_from_scene)
+        self._refresh_button.clicked.connect(self.refresh)
         self._generate_rom_button.clicked.connect(self._controller.generate_rom)
         self._clear_rom_button.clicked.connect(self._controller.clear_rom)
 
@@ -103,6 +118,7 @@ class RomGeneratorView(base.BaseWidget):
         self._model.animationStartFrameChanged.connect(self._on_animation_start_frame_changed)
         self._model.animationLengthChanged.connect(self._on_animation_length_changed)
         self._model.sceneJointsChanged.connect(self._on_scene_joints_changed)
+        self._model.selectedJointsChanged.connect(self._on_selected_joints_changed)
 
     # =================================================================================================================
     # BASE
@@ -165,4 +181,19 @@ class RomGeneratorView(base.BaseWidget):
     def _on_joints_selection_changed(self):
         selected_items = self._joints_list.selectedItems()
         joints_uuids = [item.data(Qt.UserRole + 1) for item in selected_items]
-        self._controller.set_selected_joints(joints_uuids)
+        with qt_contexts.block_signals(self._joints_list):
+            self._controller.set_selected_joints(joints_uuids)
+
+    def _on_selected_joints_changed(self, selected_joints):
+        items_to_select = list()
+        for i in range(self._joints_list.count()):
+            joint_item = self._joints_list.item(i)
+            joint_handle = joint_item.data(Qt.UserRole + 1)
+            if joint_handle in selected_joints:
+                items_to_select.append(joint_item)
+
+        self._joints_list.clearSelection()
+        for item in items_to_select:
+            item.setSelected(True)
+            self._joints_list.setItemSelected(item, True)
+            self._joints_list.scrollToItem(item)

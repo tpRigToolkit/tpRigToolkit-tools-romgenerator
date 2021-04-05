@@ -23,6 +23,13 @@ class RomGeneratorServer(server.DccServer, object):
         reply['result'] = {'names': short_joints, 'handles': joints_uuids}
         reply['success'] = True
 
+    def get_selected_joints(self, data, reply):
+        long_joints = dcc.selected_nodes_of_type(node_type='joint', full_path=True)
+        joints_uuids = [dcc.node_handle(joint) for joint in long_joints]
+
+        reply['result'] = joints_uuids
+        reply['success'] = True
+
     @dcc.undo_decorator()
     def generate_rom(self, data, reply):
         rom_data = data.get('rom_data', dict())

@@ -61,6 +61,10 @@ class RomGeneratorController(object):
         scene_joints = self._client.get_scene_joints() or dict()
         self._model.scene_joints = scene_joints
 
+    def update_joints_selection_from_scene(self):
+        selected_joints = self._client.get_selected_joints()
+        self._model.selected_joints = selected_joints
+
     def update_animation_length(self):
         anim_length = 0
         selected_joints = self._model.selected_joints

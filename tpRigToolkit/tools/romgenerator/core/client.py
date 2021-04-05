@@ -28,6 +28,18 @@ class RomGeneratorClient(client.DccClient, object):
 
         return reply_dict['result']
 
+    def get_selected_joints(self):
+        cmd = {
+            'cmd': 'get_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['result']
+
     def generate_rom(self, rom_data):
         cmd = {
             'cmd': 'generate_rom',
