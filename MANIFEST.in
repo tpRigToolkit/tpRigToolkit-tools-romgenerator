@@ -1,0 +1,4 @@
+include tpRigToolkit/tools/romgenerator/__logging__.ini
+recursive-include tpRigToolkit/tools/romgenerator/resources/* *.*
+include versioneer.py
+include tpRigToolkit/tools/romgenerator/_version.py
